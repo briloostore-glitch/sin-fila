@@ -242,7 +242,9 @@ function profile(u){return"<h2>Mi perfil</h2>"+'<div class="card"><b>'+esc(u.nam
 function clientView(u){
   if(sel){var t=tr(sel);return'<button class="btn alt sm" data-a="back">Volver</button><div class="who" style="margin:12px 0">'+ico(sel)+'<h2 style="margin:0">'+esc(t.n)+'</h2></div><div class="card"><div class="docs"><b>Ten listo:</b><ul>'+t.docs.map(function(d){return"<li>"+d+"</li>"}).join("")+"</ul></div>"+
     '<div class="docs" style="margin-top:12px"><b>Precio de este trámite</b><div id="r-p"></div></div><label for="r-z">Zona donde recogemos los documentos</label><select id="r-z">'+Z.map(function(z,i){return'<option value="'+i+'">'+z.n+"</option>"}).join("")+"</select>"+
-    '<label for="r-a">Dirección exacta (barrio, calle, apto)</label><input id="r-a">'+
+    '<label for="r-ba">Barrio</label><input id="r-ba" autocomplete="off">'+
+    '<label for="r-ca">Calle o carrera (con número)</label><input id="r-ca" autocomplete="off">'+
+    '<label for="r-ap">Apartamento, casa o torre (opcional)</label><input id="r-ap" autocomplete="off">'+
     '<label for="r-e">¿Dónde se hace el trámite?</label><select id="r-e">'+E.map(function(z,i){return'<option value="'+i+'">'+z.n+"</option>"}).join("")+"</select>"+
     '<label for="r-det">Detalles del trámite</label><textarea id="r-det"></textarea>'+
     '<label for="r-ent">Costo que cobra la entidad, si aplica (COP)</label><input id="r-ent" inputmode="numeric" value="0">'+
@@ -387,10 +389,11 @@ document.addEventListener("click",function(e){
   else if(a==="pick"){sel=v;err="";PH={};render()}
   else if(a==="back"){sel=null;err="";render()}
   else if(a==="order"){
-    if(!$("r-a").value.trim()){err="Escribe la dirección exacta de recogida.";return render()}
+    if(!$("r-ba").value.trim()){err="Escribe el barrio.";return render()}
+    if(!$("r-ca").value.trim()){err="Escribe la calle o carrera con su número.";return render()}
     if(!PH.doc&&!u.demo){err="Sube la foto de los documentos.";return render()}
     var oid=O.length?O[O.length-1].id+1:101;
-    O.push({id:oid,uid:u.id,tid:sel,z:+$("r-z").value,e:+$("r-e").value,addr:$("r-a").value.trim(),detail:$("r-det").value.trim()||"Sin detalles",entity:parseInt($("r-ent").value,10)||0,state:0,msgr:null,pin:String(1000+Math.floor(Math.random()*9000)),s:null,pos:0,docPhoto:PH.doc||"",handPhoto:"",proof:"",proofPhoto:"",rating:0,review:"",log:["Solicitado · "+now()]});
+    O.push({id:oid,uid:u.id,tid:sel,z:+$("r-z").value,e:+$("r-e").value,barrio:$("r-ba").value.trim(),calle:$("r-ca").value.trim(),apto:$("r-ap").value.trim(),addr:$("r-ca").value.trim()+", "+$("r-ba").value.trim()+($("r-ap").value.trim()?", "+$("r-ap").value.trim():""),detail:$("r-det").value.trim()||"Sin detalles",entity:parseInt($("r-ent").value,10)||0,state:0,msgr:null,pin:String(1000+Math.floor(Math.random()*9000)),s:null,pos:0,docPhoto:PH.doc||"",handPhoto:"",proof:"",proofPhoto:"",rating:0,review:"",log:["Solicitado · "+now()]});
     sel=null;nav="o";PH={};err="";save();render();toast("Pedido #"+oid+" enviado a los mensajeros.");beep("req")}
   else if(a==="acc"&&o){o.msgr=u.id;o.s={x:8+Math.random()*84,y:8+Math.random()*84};beep("acc");nav="o";step(o,1);toast("Trámite aceptado. Ya ves la dirección.")}
   else if(a==="go"&&o){
