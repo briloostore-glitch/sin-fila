@@ -198,7 +198,7 @@ function sfBk(){if(typeof sb==="undefined"||!sb||!O.length)return;sb.auth.getSes
 function hash(s){try{return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return("0"+x.toString(16)).slice(-2)}).join("")})}catch(e){return Promise.resolve(btoa(s))}}
 var SB_URL="https://pizvmunegbzsopddqthz.supabase.co",SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpenZtdW5lZ2J6c29wZGRxdGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyOTUxMjMsImV4cCI6MjEwNjg3MTEyM30.YSbFbKRcOdkL6-n0EhNJLG3kFPNupgC2fKTiUZec4CQ",SB_DOM="sinfila.co",sb=null;
 try{if(window.supabase&&SB_URL.indexOf("http")===0)sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){sb=null}
-function pe(p){return p+"@"+SB_DOM}
+function pe(p){return p.indexOf("@")>-1?p:p+"@"+SB_DOM}
 function cop(n){return"$"+Math.round(n).toLocaleString("es-CO")}
 function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function tr(id){return T.filter(function(t){return t.id===id})[0]}
@@ -245,7 +245,7 @@ function authView(){
   return'<button class="btn alt sm" data-a="home">Volver al inicio</button><h1>Sin Fila</h1><p class="sub">Tu trámite hecho por alguien verificado, con seguimiento en el mapa.</p>'+
   '<div class="seg"><button data-a="mode" data-v="in" aria-selected="'+!reg+'">Ingresar</button><button data-a="mode" data-v="reg" aria-selected="'+reg+'">Crear cuenta</button></div><div class="card">'+
   (reg?'<label for="a-name">Nombre completo</label><input id="a-name" autocomplete="name">':"")+
-  '<label for="a-tel">WhatsApp'+(reg?" (10 dígitos)":"")+'</label><input id="a-tel" inputmode="tel" autocomplete="tel">'+
+  '<label for="a-tel">Correo electr&oacute;nico</label><input id="a-tel" inputmode="email" autocomplete="email">'+
   '<label for="a-pw">Contraseña'+(reg?" (mínimo 6 caracteres)":"")+'</label><input id="a-pw" type="password" autocomplete="'+(reg?"new-password":"current-password")+'">'+
   (reg?'<label for="a-role">¿Qué quieres hacer?</label><select id="a-role"><option value="c"'+(PRE==="c"?" selected":"")+'>Pedir trámites</option><option value="m"'+(PRE==="m"?" selected":"")+'>Hacer trámites como mensajero</option></select>'+
   '<label for="a-ced">Número de cédula</label><input id="a-ced" inputmode="numeric">'+
@@ -393,9 +393,9 @@ document.addEventListener("click",function(e){
   if(!ctx)try{ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(x){}
   if(a==="mode"){mode=v;err="";render()}
   else if(a==="reg"){
-    var n=$("a-name").value.trim(),p=$("a-tel").value.replace(/\D/g,""),pw=$("a-pw").value,r=$("a-role").value,ced=$("a-ced").value.trim();
+    var n=$("a-name").value.trim(),p=$("a-tel").value.trim().toLowerCase(),pw=$("a-pw").value,r=$("a-role").value,ced=$("a-ced").value.trim();
     if(!n)return fail("Escribe tu nombre completo.");
-    if(p.length!==10)return fail("El WhatsApp debe tener 10 dígitos.");
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p))return fail("Escribe un correo electr\u00f3nico v\u00e1lido.");
     if(pw.length<6)return fail("La contraseña debe tener mínimo 6 caracteres.");
     if(!ced)return fail("Escribe tu número de cédula.");
     if(!PH.id)return fail("Sube la selfie con tu cédula para confirmar tu identidad.");
@@ -413,21 +413,21 @@ document.addEventListener("click",function(e){
           veh[kk]={placa:pl,foto:PH[kk+"f"],doc:PH[kk+"d"],soat:PH[kk+"s"]}}}
       if(Object.keys(veh).length&&!PH.lic)return fail("Sube la foto de tu licencia de conducción.")}
     if(!$("a-ok").checked)return fail("Debes aceptar el tratamiento de datos.");
-    if(U.some(function(x){return x.phone===p}))return fail("Ese WhatsApp ya tiene cuenta. Ingresa.");
+    if(U.some(function(x){return x.phone===p}))return fail("Ese correo ya tiene cuenta. Ingresa.");
     var mk=function(h,sid){var nu={sid:sid,id:Date.now(),role:r,name:n,phone:p,pw:h,status:r==="m"?"pending":"ok",ced:ced,ref:r==="m"?$("a-ref").value.trim():"",idph:PH.id,av:PH.av,pay:pay,veh:veh,lic:r==="m"?(PH.lic||""):""};
       U.push(nu);ses=nu.id;nav="h";err="";PH={};save();render();toast(r==="m"?"Cuenta creada. Queda en revisión.":"¡Cuenta creada!")};
     if(r==="c"&&sb){sb.auth.signUp({email:pe(p),password:pw,options:{data:{full_name:n}}}).then(function(x){
-      if(x.error)return fail(/registered|already/i.test(x.error.message)?"Ese WhatsApp ya tiene cuenta. Ingresa.":"No se pudo crear la cuenta: "+x.error.message);
+      if(x.error)return fail(/registered|already/i.test(x.error.message)?"Ese correo ya tiene cuenta. Ingresa.":"No se pudo crear la cuenta: "+x.error.message);
       if(!x.data||!x.data.user||!x.data.session)return fail("La cuenta requiere confirmación. Revisa Supabase Auth.");
       mk("-",x.data.user.id)}).catch(function(){fail("Sin conexión. Intenta de nuevo.")})}
     else hash(pw).then(function(h){mk(h,"")})}
-  else if(a==="login"){var p2=$("a-tel").value.trim().toLowerCase().replace(/[^a-z0-9]/g,"");
+  else if(a==="login"){var p2=$("a-tel").value.trim().toLowerCase().replace(/[^a-z0-9@._+-]/g,"");
     var pw2=$("a-pw").value,lf=U.filter(function(x){return x.phone===p2})[0];
-    if(sb&&/^\d{10}$/.test(p2)&&(!lf||lf.sid)){sb.auth.signInWithPassword({email:pe(p2),password:pw2}).then(function(x){
-      if(x.error||!x.data||!x.data.user)return fail("WhatsApp o contraseña incorrectos.");
+    if(sb&&/^(\d{10}|[^\s@]+@[^\s@]+\.[^\s@]+)$/.test(p2)&&(!lf||lf.sid)){sb.auth.signInWithPassword({email:pe(p2),password:pw2}).then(function(x){
+      if(x.error||!x.data||!x.data.user)return fail("Correo o contrase\u00f1a incorrectos.");
       if(!lf){var md=x.data.user.user_metadata||{};lf={id:Date.now(),role:"c",name:md.full_name||"Cliente",phone:p2,pw:"-",status:"ok",sid:x.data.user.id};U.push(lf)}
       ses=lf.id;nav="h";err="";save();render()}).catch(function(){fail("Sin conexión. Intenta de nuevo.")})}
-    else hash(pw2).then(function(h){var f=U.filter(function(x){return x.phone===p2&&x.pw===h})[0];if(!f)return fail("WhatsApp o contraseña incorrectos.");ses=f.id;nav="h";err="";save();render()})}
+    else hash(pw2).then(function(h){var f=U.filter(function(x){return x.phone===p2&&x.pw===h})[0];if(!f)return fail("Correo o contrase\u00f1a incorrectos.");ses=f.id;nav="h";err="";save();render()})}
   else if(a==="scroll"){var el=$(v);if(el)el.scrollIntoView({behavior:"smooth"})}
   else if(a==="home"){home=true;err="";render()}
   else if(a==="goto"){home=false;mode=v;PRE=b.dataset.r||"c";err="";render()}
