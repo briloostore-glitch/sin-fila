@@ -147,6 +147,7 @@ footer.lf{font-size:.95rem}
 <div id="zoom" class="hide" role="dialog" aria-label="Foto ampliada"><img alt="Foto ampliada"></div>
 <div id="app"></div>
 <div id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var T=[
 {id:"doc",n:"Entrega y radicación de documentos",fee:20000,docs:["Documentos a radicar","Copia de la cédula del titular","Autorización firmada"]},
@@ -164,6 +165,9 @@ U=ld("sf3u",[]);O=ld("sf3o",[]);
 try{ses=JSON.parse(sessionStorage.getItem("sf3s")||"null")}catch(e){}
 function save(){try{localStorage.setItem("sf3u",JSON.stringify(U));localStorage.setItem("sf3o",JSON.stringify(O));sessionStorage.setItem("sf3s",JSON.stringify(ses))}catch(e){toast("No hay espacio para guardar. Reinicia la demo.")}}
 function hash(s){try{return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return("0"+x.toString(16)).slice(-2)}).join("")})}catch(e){return Promise.resolve(btoa(s))}}
+var SB_URL="https://pizvmunegbzsopddqthz.supabase.co",SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpenZtdW5lZ2J6c29wZGRxdGh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyOTUxMjMsImV4cCI6MjEwNjg3MTEyM30.YSbFbKRcOdkL6-n0EhNJLG3kFPNupgC2fKTiUZec4CQ",SB_DOM="sinfila.co",sb=null;
+try{if(window.supabase&&SB_URL.indexOf("http")===0)sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){sb=null}
+function pe(p){return p+"@"+SB_DOM}
 function cop(n){return"$"+Math.round(n).toLocaleString("es-CO")}
 function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function tr(id){return T.filter(function(t){return t.id===id})[0]}
@@ -353,10 +357,20 @@ document.addEventListener("click",function(e){
       if(Object.keys(veh).length&&!PH.lic)return fail("Sube la foto de tu licencia de conducción.")}
     if(!$("a-ok").checked)return fail("Debes aceptar el tratamiento de datos.");
     if(U.some(function(x){return x.phone===p}))return fail("Ese WhatsApp ya tiene cuenta. Ingresa.");
-    hash(pw).then(function(h){var nu={id:Date.now(),role:r,name:n,phone:p,pw:h,status:r==="m"?"pending":"ok",ced:ced,ref:r==="m"?$("a-ref").value.trim():"",idph:PH.id,av:PH.av,pay:pay,veh:veh,lic:r==="m"?(PH.lic||""):""};
-      U.push(nu);ses=nu.id;nav="h";err="";PH={};save();render();toast(r==="m"?"Cuenta creada. Queda en revisión.":"¡Cuenta creada!")})}
+    var mk=function(h,sid){var nu={sid:sid,id:Date.now(),role:r,name:n,phone:p,pw:h,status:r==="m"?"pending":"ok",ced:ced,ref:r==="m"?$("a-ref").value.trim():"",idph:PH.id,av:PH.av,pay:pay,veh:veh,lic:r==="m"?(PH.lic||""):""};
+      U.push(nu);ses=nu.id;nav="h";err="";PH={};save();render();toast(r==="m"?"Cuenta creada. Queda en revisión.":"¡Cuenta creada!")};
+    if(r==="c"&&sb){sb.auth.signUp({email:pe(p),password:pw,options:{data:{full_name:n}}}).then(function(x){
+      if(x.error)return fail(/registered|already/i.test(x.error.message)?"Ese WhatsApp ya tiene cuenta. Ingresa.":"No se pudo crear la cuenta: "+x.error.message);
+      if(!x.data||!x.data.user||!x.data.session)return fail("La cuenta requiere confirmación. Revisa Supabase Auth.");
+      mk("-",x.data.user.id)}).catch(function(){fail("Sin conexión. Intenta de nuevo.")})}
+    else hash(pw).then(function(h){mk(h,"")})}
   else if(a==="login"){var p2=$("a-tel").value.trim().toLowerCase().replace(/[^a-z0-9]/g,"");
-    hash($("a-pw").value).then(function(h){var f=U.filter(function(x){return x.phone===p2&&x.pw===h})[0];if(!f)return fail("WhatsApp o contraseña incorrectos.");ses=f.id;nav="h";err="";save();render()})}
+    var pw2=$("a-pw").value,lf=U.filter(function(x){return x.phone===p2})[0];
+    if(sb&&/^\d{10}$/.test(p2)&&(!lf||lf.sid)){sb.auth.signInWithPassword({email:pe(p2),password:pw2}).then(function(x){
+      if(x.error||!x.data||!x.data.user)return fail("WhatsApp o contraseña incorrectos.");
+      if(!lf){var md=x.data.user.user_metadata||{};lf={id:Date.now(),role:"c",name:md.full_name||"Cliente",phone:p2,pw:"-",status:"ok",sid:x.data.user.id};U.push(lf)}
+      ses=lf.id;nav="h";err="";save();render()}).catch(function(){fail("Sin conexión. Intenta de nuevo.")})}
+    else hash(pw2).then(function(h){var f=U.filter(function(x){return x.phone===p2&&x.pw===h})[0];if(!f)return fail("WhatsApp o contraseña incorrectos.");ses=f.id;nav="h";err="";save();render()})}
   else if(a==="scroll"){var el=$(v);if(el)el.scrollIntoView({behavior:"smooth"})}
   else if(a==="home"){home=true;err="";render()}
   else if(a==="goto"){home=false;mode=v;PRE=b.dataset.r||"c";err="";render()}
@@ -381,7 +395,7 @@ document.addEventListener("click",function(e){
   else if(a==="appr"||a==="rej"){usr(id).status=a==="appr"?"ok":"rej";save();render()}
   else if(a==="paid"&&o){o.paid=true;save();render()}
   else if(a==="setav"){if(!PH.av)return toast("Elige una foto primero.");u.av=PH.av;delete PH.av;save();render();toast("Foto de perfil actualizada.")}
-  else if(a==="out"){home=true;ses=null;nav="h";save();render()}
+  else if(a==="out"){if(sb)sb.auth.signOut().catch(function(){});home=true;ses=null;nav="h";save();render()}
   else if(a==="del"){if(!confirm("¿Eliminar tu cuenta y tus datos? No se puede deshacer."))return;
     O.forEach(function(x){if(x.uid===u.id){x.detail="[borrado]";x.addr="[borrado]";x.docPhoto=""}});
     U=U.filter(function(x){return x.id!==u.id});home=true;ses=null;save();render();toast("Cuenta y datos eliminados.")}
