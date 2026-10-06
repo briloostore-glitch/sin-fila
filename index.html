@@ -203,6 +203,26 @@ body #app:has(.hero) .sf-foot::before{content:"";position:absolute;top:0;bottom:
 body #app:has(.hero) .sf-in{max-width:none!important;padding-left:0!important;padding-right:0!important}
 body #app:has(.hero) .sf-grid{gap:clamp(24px,4vw,64px)}
 /* FIN-LAYOUT-ANCHO */
+/* PANELES-ANCHO */
+body #app:has(> nav){max-width:1440px!important;padding:24px clamp(16px,4vw,56px) 110px!important}
+body #app:has(> nav) > nav div{max-width:720px}
+@media(min-width:900px){
+body #app:has(> nav):not(:has(#r-p)){display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px;align-items:start}
+body #app:has(> nav):not(:has(#r-p)) > h1,
+body #app:has(> nav):not(:has(#r-p)) > h2,
+body #app:has(> nav):not(:has(#r-p)) > .sub,
+body #app:has(> nav):not(:has(#r-p)) > .seg,
+body #app:has(> nav):not(:has(#r-p)) > .stats,
+body #app:has(> nav):not(:has(#r-p)) > .meta,
+body #app:has(> nav):not(:has(#r-p)) > .err,
+body #app:has(> nav):not(:has(#r-p)) > .map,
+body #app:has(> nav):not(:has(#r-p)) > .btn{grid-column:1/-1}
+body #app:has(> nav):not(:has(#r-p)) > .card,
+body #app:has(> nav):not(:has(#r-p)) > .t{margin:0}
+body #app:has(> nav) .stats{grid-template-columns:repeat(4,1fr);gap:16px}
+}
+body #app:has(> nav):has(#r-p){max-width:820px!important}
+/* FIN-PANELES-ANCHO */
 </style>
 </head>
 <body>
