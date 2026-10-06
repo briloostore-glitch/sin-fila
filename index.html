@@ -148,6 +148,29 @@ nav button{flex:0 1 auto;min-width:160px;padding:12px 24px;text-align:center}
 #app{padding-top:88px;padding-bottom:40px}
 #toast{bottom:28px}
 }
+/* footer-sinfila */
+.sf-foot{background:#0b1a2b;color:#fff;margin:56px calc(50% - 50vw) 0;padding:52px 20px 28px}
+.sf-in{max-width:1000px;margin:0 auto}
+.sf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+.sf-foot h3{font-size:1.05rem;font-weight:800;margin:0 0 14px}
+.sf-foot ul{list-style:none;margin:0;padding:0}
+.sf-l{background:none;border:0;color:#fff;font:inherit;font-size:.95rem;font-weight:500;padding:8px 0;cursor:pointer;text-align:left}
+.sf-l:hover{text-decoration:underline}
+.sf-t{color:#c9d6e2;font-size:.95rem;padding:8px 0}
+.sf-bot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:40px}
+.sf-soc{display:flex;gap:18px;align-items:center}
+.sf-so{color:#fff;display:inline-flex}
+.sf-loc{display:flex;gap:24px;flex-wrap:wrap;font-size:.95rem;font-weight:700}
+.sf-loc span{display:inline-flex;align-items:center;gap:8px}
+.sf-apps{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.sf-app{display:inline-flex;flex-direction:column;border:1px solid #6b7f93;border-radius:10px;padding:7px 16px;color:#fff;text-decoration:none;line-height:1.15}
+.sf-app span{font-size:.65rem;color:#c9d6e2}
+.sf-app b{font-size:1.05rem;font-weight:700}
+.sf-app.off{opacity:.85;cursor:default}
+.sf-legal{margin:28px 0 0;font-size:.85rem;color:#9db2c6}
+#app:has(.sf-foot){padding-bottom:0}
+body:has(.sf-foot){overflow-x:clip}
+@media(max-width:700px){.sf-grid{grid-template-columns:1fr 1fr;gap:24px}.sf-foot{padding-top:40px}}
 </style>
 </head>
 <body>
@@ -309,7 +332,31 @@ function landing(){
   '<section class="sec" id="como"><h2>Cómo funciona</h2><div class="steps">'+st+'</div></section>'+
   '<div class="band"><b>Por qué puedes confiar</b><ul><li>Identidad verificada de clientes y mensajeros.</li><li>Código de 4 dígitos para entregar tus documentos a la persona correcta.</li><li>Fotos en cada paso y seguimiento en el mapa.</li><li>Pago retenido hasta que confirmas el comprobante.</li><li>Tus datos se usan solo para el trámite y puedes borrarlos cuando quieras.</li></ul></div>'+
   '<section class="sec" id="mensajeros"><h2>¿Quieres ser mensajero?</h2><p class="sub">Elige los trámites que quieres hacer y recibe avisos de nuevos pedidos. Te quedas con el 75 % de la tarifa (porcentaje de ejemplo). Verificamos tu identidad antes de activar tu cuenta.</p><button class="btn" style="width:auto;padding:13px 20px" data-a="goto" data-v="reg" data-r="m">Registrarme como mensajero</button></section>'+
-  '<footer class="lf">Sin Fila · Pereira, Colombia · Versión de demostración.</footer>'}
+  ft()}
+function ft(){
+  var SOC_URL={li:"",yt:"",ig:"",x:""},APP_URL={g:"",a:""};
+  var sv='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  var ic={
+    li:sv+'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8v.01M12 16v-5M12 13a2.5 2.5 0 0 1 5 0v3"/></svg>',
+    yt:sv+'<rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5v5l4.5-2.5z"/></svg>',
+    ig:sv+'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5v.01"/></svg>',
+    x:sv+'<path d="M4 4l16 16M20 4L4 20"/></svg>'};
+  var nm={li:"LinkedIn",yt:"YouTube",ig:"Instagram",x:"X"};
+  var soc=["li","yt","ig","x"].filter(function(k){return SOC_URL[k]}).map(function(k){return'<a class="sf-so" href="'+esc(SOC_URL[k])+'" target="_blank" rel="noopener noreferrer" aria-label="'+nm[k]+'">'+ic[k]+'</a>'}).join("");
+  function lk(a,v,t,r){return'<li><button class="sf-l" data-a="'+a+'" data-v="'+v+'"'+(r?' data-r="'+r+'"':"")+'>'+t+'</button></li>'}
+  function tx(t){return'<li class="sf-t">'+t+'</li>'}
+  function col(h,items){return'<div><h3>'+h+'</h3><ul>'+items+'</ul></div>'}
+  function app(u,small,big){var inner='<span>'+small+'</span><b>'+big+'</b>';return u?'<a class="sf-app" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+inner+'</a>':'<span class="sf-app off">'+inner+'</span>'}
+  var c1=lk("scroll","servicios","Servicios")+lk("scroll","como","C\u00f3mo funciona")+lk("goto","reg","Ser mensajero","m")+lk("goto","in","Ingresar")+lk("goto","reg","Crear cuenta","c");
+  var c2=T.map(function(t){return lk("scroll","servicios",esc(t.n))}).join("");
+  var c3=tx("Identidad verificada")+tx("C\u00f3digo de entrega de 4 d\u00edgitos")+tx("Fotos en cada paso")+tx("Pago retenido hasta tu confirmaci\u00f3n");
+  var c4=Z.map(function(z){return tx(esc(z.n))}).join("");
+  var globe=sv.replace('width="22" height="22"','width="18" height="18"')+'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg>';
+  var pin=sv.replace('width="22" height="22"','width="18" height="18"')+'<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  return'<footer class="sf-foot"><div class="sf-in"><div class="sf-grid">'+col("Compa\u00f1\u00eda",c1)+col("Tr\u00e1mites",c2)+col("Confianza",c3)+col("Zonas de recogida",c4)+'</div>'+
+    '<div class="sf-bot"><div class="sf-soc">'+soc+'</div><div class="sf-loc"><span>'+globe+'Espa\u00f1ol (Colombia)</span><span>'+pin+'Pereira</span></div></div>'+
+    '<div class="sf-apps">'+app(APP_URL.g,"Pr\u00f3ximamente en","Google Play")+app(APP_URL.a,"Pr\u00f3ximamente en","App Store")+'</div>'+
+    '<p class="sf-legal">Sin Fila \u00b7 Pereira, Colombia \u00b7 Versi\u00f3n de demostraci\u00f3n.</p></div></footer>'}
 function render(){
   var a=$("app"),u=ses&&usr(ses);
   if(!u){ses=null;a.style.maxWidth=home?"1000px":"";a.innerHTML=home?landing():authView();var r=$("a-role");if(r){r.onchange=function(){$("a-m").classList.toggle("hide",this.value!=="m")};if(PRE==="m")$("a-m").classList.remove("hide")}return}
