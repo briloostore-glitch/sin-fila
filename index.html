@@ -150,7 +150,7 @@ nav button{flex:0 1 auto;min-width:160px;padding:12px 24px;text-align:center}
 }
 /* footer-sinfila */
 .sf-foot{background:#0b1a2b;color:#fff;margin:56px calc(50% - 50vw) 0;padding:52px 20px 28px}
-.sf-in{max-width:1400px;margin:0 auto}
+.sf-in{max-width:none;margin:0 auto}
 .sf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
 .sf-foot h3{font-size:1.05rem;font-weight:800;margin:0 0 14px}
 .sf-foot ul{list-style:none;margin:0;padding:0}
@@ -173,6 +173,7 @@ body:has(.sf-foot){overflow-x:clip}
 @media(max-width:700px){.sf-grid{grid-template-columns:1fr 1fr;gap:24px}.sf-foot{padding-top:40px}}
 </style>
 <style id="sf-zoom">body{zoom:0.85}</style>
+<style id="sf-full">footer,.footer,#footer{max-width:none!important;width:100%!important;box-sizing:border-box!important;margin-left:0!important;margin-right:0!important;border-radius:0!important}</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-card"><img id="sp-img" alt=""></div><div class="sp-bar"><i></i></div></div>
