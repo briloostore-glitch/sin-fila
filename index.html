@@ -173,7 +173,13 @@ body:has(.sf-foot){overflow-x:clip}
 @media(max-width:700px){.sf-grid{grid-template-columns:1fr 1fr;gap:24px}.sf-foot{padding-top:40px}}
 </style>
 <style id="sf-zoom">body{zoom:0.85}</style>
-<style id="sf-full">footer,.footer,#footer{max-width:none!important;width:100%!important;box-sizing:border-box!important;margin-left:0!important;margin-right:0!important;border-radius:0!important}</style>
+<style id="sf-full">footer,.footer,#footer{max-width:none!important;width:100%!important;box-sizing:border-box!important;margin-left:0!important;margin-right:0!important;border-radius:0!important}
+/* barra y pie a todo el ancho */
+body{overflow-x:clip}
+.lh{box-shadow:0 0 0 100vmax var(--card);clip-path:inset(0 -100vmax);background:var(--card);padding:14px 0}
+.sf-foot{position:relative;isolation:isolate;border-radius:0!important}
+.sf-foot::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:100vw;margin-left:-50vw;background:inherit;z-index:-1}
+</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-card"><img id="sp-img" alt=""></div><div class="sp-bar"><i></i></div></div>
