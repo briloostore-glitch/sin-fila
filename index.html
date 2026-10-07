@@ -278,6 +278,17 @@ nav button[aria-current=page]{background:var(--ink)!important;color:var(--bg)!im
 /* FOOTER-PANELES */
 body #app:has(> nav) > .sf-foot{grid-column:1/-1;margin-top:56px!important}
 body #app:has(> nav):has(.sf-foot){padding-bottom:0!important}
+/* NAV-CENTRADO */
+@media(min-width:900px){
+body #app .lh .lnav{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+body #app .lh .lnav .lk{padding:10px 20px;font-size:1rem;border-radius:10px}
+body #app .lh .lnav .lk:hover{background:var(--soft);color:var(--ink)}
+body #app .lh .lnav .lk:first-child{margin-left:auto}
+body #app .lh .lnav .btn.alt{margin-left:auto}
+body #app .lh .lnav .btn{padding:11px 22px}
+body #app .lh .lnav .btn.alt+.btn{margin-left:8px}
+}
+/* FIN-NAV-CENTRADO */
 </style>
 </head>
 <body>
