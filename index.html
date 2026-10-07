@@ -274,7 +274,11 @@ body #app .ub-si:hover{border-color:var(--acc)}
 body #app .ub-si>div:nth-child(2){flex:1}
 body #app .ub-ar{font-size:1.6rem;color:var(--mute)}
 nav button[aria-current=page]{background:var(--ink)!important;color:var(--bg)!important}
-@media(max-width:899px){body #app .ub-hero,body #app .ub-cols{grid-template-columns:1fr}}</style>
+@media(max-width:899px){body #app .ub-hero,body #app .ub-cols{grid-template-columns:1fr}}
+/* FOOTER-PANELES */
+body #app:has(> nav) > .sf-foot{grid-column:1/-1;margin-top:56px!important}
+body #app:has(> nav):has(.sf-foot){padding-bottom:0!important}
+</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-card"><img id="sp-img" alt=""></div><div class="sp-bar"><i></i></div></div>
@@ -626,7 +630,7 @@ function render(){
   if(!u){ses=null;a.style.maxWidth=home?"1000px":"";a.innerHTML=home?landing():authView();var r=$("a-role");if(r){r.onchange=function(){$("a-m").classList.toggle("hide",this.value!=="m")};if(PRE==="m")$("a-m").classList.remove("hide")}return}
   a.style.maxWidth="";var it=u.role==="a"?[["h","Panel"],["o","Seguimiento"],["c","Contenido"],["p","Perfil"]]:[["h",u.role==="c"?"Pedir":"Pedidos"],["o","Mis trámites"],["p","Perfil"]];
   if(u.role==="m"&&u.status!=="ok")it=[["h","Inicio"],["p","Perfil"]];
-  a.innerHTML=(u.role==="c"?clientView(u):u.role==="m"?msgrView(u):adminView(u)).replace(/<nav>[\s\S]*$/,"")+bar(it);
+  a.innerHTML=(u.role==="c"?clientView(u):u.role==="m"?msgrView(u):adminView(u)).replace(/<nav>[\s\S]*$/,"")+ft()+bar(it);
   if(sel){pb();$("r-ent").oninput=pb}}
 function pb(){var t=tr(sel),e=parseInt($("r-ent").value,10)||0;$("r-p").innerHTML='<div class="price"><span>Servicio Sin Fila</span><span>'+cop(t.fee)+'</span></div><div class="price"><span>Costo de la entidad</span><span>'+cop(e)+'</span></div><div class="price tt"><span>Total retenido</span><span>'+cop(t.fee+e)+"</span></div>"}
 function fail(m){err=m;var e=$("a-err");if(e)e.textContent=m;else render()}
