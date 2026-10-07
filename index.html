@@ -254,7 +254,27 @@ body #app .svc>.card button{margin:auto 0 0 0!important;align-self:flex-start!im
 /* STEPS-CSS */
 .steps .card:has(.stimg){display:flex;flex-direction:column}
 .steps .card:has(.stimg)::before{order:-1;align-self:flex-start;margin-bottom:10px}
-.steps .card .stimg{order:-2;width:100%;height:170px;object-fit:cover;border-radius:12px;margin-bottom:12px;display:block}</style>
+.steps .card .stimg{order:-2;width:100%;height:170px;object-fit:cover;border-radius:12px;margin-bottom:12px;display:block}
+/* CLIENT-UBER-CSS */
+body #app:has(> nav) > .ub{grid-column:1/-1}
+body #app .ub-hero{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px);align-items:center;padding:clamp(8px,3vw,40px) 0 clamp(24px,4vw,48px)}
+body #app .ub-hero h1{font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.05;letter-spacing:-.03em;margin:8px 0 12px}
+body #app .ub-city{font-weight:700;font-size:.95rem}
+body #app .ub-cta{width:auto;padding:14px 26px;background:var(--ink);color:var(--bg);border-radius:12px}
+body #app .ub-sug h2{margin:0 0 12px}
+body #app .ub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+body #app .ub-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 8px;min-height:130px;cursor:pointer;font:inherit;font-weight:700;font-size:.85rem;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+body #app .ub-tile:hover{border-color:var(--acc);box-shadow:0 6px 18px rgba(14,42,71,.1)}
+body #app .ub-h{font-size:clamp(1.5rem,2.4vw,2rem);margin:12px 0 14px}
+body #app .ub-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding:24px;margin:0}
+body #app .ub-cols h3{margin:0 0 12px;font-size:1.05rem}
+body #app .ub-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+body #app .ub-si{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--bg);border:1px solid transparent;border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;font:inherit;color:var(--ink)}
+body #app .ub-si:hover{border-color:var(--acc)}
+body #app .ub-si>div:nth-child(2){flex:1}
+body #app .ub-ar{font-size:1.6rem;color:var(--mute)}
+nav button[aria-current=page]{background:var(--ink)!important;color:var(--bg)!important}
+@media(max-width:899px){body #app .ub-hero,body #app .ub-cols{grid-template-columns:1fr}}</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-card"><img id="sp-img" alt=""></div><div class="sp-bar"><i></i></div></div>
@@ -462,8 +482,16 @@ function clientView(u){
     if(o.state===4)b+=o.rating?'<div class="cap">Tu calificación: '+"★".repeat(o.rating)+"</div>":'<div class="cap">Califica a '+esc(nm(o.msgr))+'</div><div class="stars">'+[1,2,3,4,5].map(function(n){return'<button data-a="rate" data-v="'+n+'" data-id="'+o.id+'" aria-label="'+n+' estrellas">★</button>'}).join("")+'</div><input id="rv-'+o.id+'" placeholder="Comentario (opcional)" style="margin-top:8px">';
     return b+"</div>"}).join("")||'<p class="meta">Aún no tienes trámites.</p>';return"<h2>Mis trámites</h2>"+m}
   if(nav==="p")return profile(u);
-  return'<h1>Hola, '+esc(u.name.split(" ")[0])+'</h1><p class="sub">¿Qué trámite quieres que hagamos por ti?</p>'+T.map(function(t){return'<button class="t" data-a="pick" data-v="'+t.id+'">'+ico(t.id)+'<div class="tx"><b>'+t.n+"</b><span>Con seguimiento y fotos en cada paso</span></div><div class=\"go\">Elegir</div></button>"}).join("")}
+  return clientHome(u);return'<h1>Hola, '+esc(u.name.split(" ")[0])+'</h1><p class="sub">¿Qué trámite quieres que hagamos por ti?</p>'+T.map(function(t){return'<button class="t" data-a="pick" data-v="'+t.id+'">'+ico(t.id)+'<div class="tx"><b>'+t.n+"</b><span>Con seguimiento y fotos en cada paso</span></div><div class=\"go\">Elegir</div></button>"}).join("")}
 
+/* CLIENT-UBER */
+function clientHome(u){
+  var mine=O.filter(function(o){return o.uid===u.id}).reverse(),last=mine[0],fn=esc(u.name.split(" ")[0]);
+  var sug=T.map(function(t){return'<button class="ub-tile" data-a="pick" data-v="'+t.id+'">'+ico(t.id)+'<span>'+esc(t.n)+'</span></button>'}).join("");
+  var rec=last?'<div class="ub-rec">'+head(last)+tl(last.state)+'<p class="meta">'+esc(last.addr)+'</p><p class="meta">'+esc(last.log[last.log.length-1]||"")+' \u00b7 '+cop(tr(last.tid).fee+(last.entity||0))+'</p><button class="btn alt sm" data-a="nav" data-v="o">Ver detalles</button></div>':'<p class="meta">A\u00fan no tienes tr\u00e1mites. Elige un servicio para empezar.</p>';
+  var past=mine.slice(1,5).map(function(o){return'<div class="ub-row"><div><b>'+esc(tr(o.tid).n)+'</b><div class="meta">'+esc(S[o.state])+' \u00b7 '+cop(tr(o.tid).fee+(o.entity||0))+'</div></div><button class="btn alt sm" data-a="nav" data-v="o">Ver detalles</button></div>'}).join("")||'<p class="meta">Tus tr\u00e1mites anteriores aparecer\u00e1n aqu\u00ed.</p>';
+  var svc=T.map(function(t){return'<button class="ub-si" data-a="pick" data-v="'+t.id+'">'+ico(t.id)+'<div><b>'+esc(t.n)+'</b><div class="meta">Desde '+cop(t.fee)+'</div></div><span class="ub-ar">\u203a</span></button>'}).join("");
+  return'<div class="ub"><div class="ub-hero"><div><div class="ub-city">Pereira, CO</div><h1>Solicita un tr\u00e1mite</h1><p class="sub">Hola, '+fn+'. \u00bfQu\u00e9 tr\u00e1mite quieres que hagamos por ti?</p><button class="btn ub-cta" data-a="scroll" data-v="ub-sug">Elegir un servicio</button></div><div class="ub-sug" id="ub-sug"><h2>Sugerencias</h2><div class="ub-grid">'+sug+'</div></div></div><h2 class="ub-h">Tu cuenta y actividad</h2><div class="card ub-cols"><div><h3>M\u00e1s reciente</h3>'+rec+'</div><div><h3>Pasado</h3>'+past+'</div><div><h3>Servicios</h3>'+svc+'</div></div></div>'}
 function msgrView(u){
   if(u.status!=="ok")return nav==="p"?profile(u):"<h2>Cuenta en revisión</h2><div class=\"card\">"+(u.status==="rej"?"Tu solicitud no fue aprobada.":"Estamos verificando tu identidad. Cuando te aprueben recibirás pedidos con aviso sonoro.")+"</div>"+bar([["h","Inicio"],["p","Perfil"]]).replace("","");
   if(nav==="p")return profile(u);
