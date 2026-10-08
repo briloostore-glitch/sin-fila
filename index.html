@@ -343,7 +343,26 @@ body #app .sf-foot .sf-lang{grid-column:2;grid-row:3;display:flex;gap:10px;justi
 body #app .sf-foot .sf-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0a1a2b;border-radius:999px;padding:8px 16px;font-weight:700}
 body #app .sf-foot .sf-apps{grid-column:1/-1!important;grid-row:4!important}
 body #app .sf-foot .sf-legal{grid-row:5!important}
-@media(max-width:700px){body #app .sf-foot .sf-lang{grid-column:1;grid-row:4;justify-content:flex-start}body #app .sf-foot .sf-apps{grid-row:5!important}body #app .sf-foot .sf-legal{grid-row:6!important}}</style>
+@media(max-width:700px){body #app .sf-foot .sf-lang{grid-column:1;grid-row:4;justify-content:flex-start}body #app .sf-foot .sf-apps{grid-row:5!important}body #app .sf-foot .sf-legal{grid-row:6!important}}
+/* SOC-ALWAYS-CSS */
+body #app .sf-foot .sf-so:not([href]){cursor:default}
+body #app .sf-foot .sf-so{width:44px;height:44px;transition:transform .15s}
+body #app .sf-foot .sf-so[href]:hover{transform:translateY(-2px)}
+
+/* HAMBURGER-NAV-CSS */
+.hb{display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:46px;height:46px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);cursor:pointer;padding:0}
+.hb span{display:block;width:20px;height:2px;background:currentColor;border-radius:2px;transition:transform .2s,opacity .2s}
+.lh.open .hb span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.lh.open .hb span:nth-child(2){opacity:0}
+.lh.open .hb span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:899px){
+body #app .lh{box-shadow:none!important;clip-path:none!important;margin-left:calc(-1*clamp(16px,4vw,56px))!important;margin-right:calc(-1*clamp(16px,4vw,56px))!important;padding:12px clamp(16px,4vw,56px)!important;flex-wrap:nowrap!important;background:var(--card)}
+body #app .lh .hb{display:inline-flex}
+body #app .lh .lnav{display:none!important}
+body #app .lh.open .lnav{display:flex!important;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:4px;padding:10px clamp(16px,4vw,56px) 18px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 18px 30px rgba(14,42,71,.14)}
+body #app .lh .lnav .lk{text-align:left;padding:14px 6px;font-size:1.05rem;border-bottom:1px solid var(--line);border-radius:0}
+body #app .lh .lnav .btn{width:100%;margin:8px 0 0!important}
+}</style>
 <link rel="icon" type="image/png" href="/sf-icon.png"><link rel="apple-touch-icon" href="/sf-icon.png">
 </head>
 <body>
@@ -732,24 +751,31 @@ var contentView3=contentView;
 contentView=function(){var h=contentView3(),o=SITE.biz||{};
   var x='<h2>Sin Fila para empresas</h2><div class="card"><label for="sf-bz-t">T\u00edtulo</label><input id="sf-bz-t" value="'+esc(o.t||B0.t)+'"><label for="sf-bz-d">Texto</label><textarea id="sf-bz-d">'+esc(o.d||B0.d)+'</textarea><label for="sf-bz-l">Texto del bot\u00f3n</label><input id="sf-bz-l" value="'+esc(o.l||B0.l)+'"><label>Imagen (cuadrada)</label><input type="file" accept="image/*" data-sf-file="biz"><img id="sf-pv-biz" class="pv'+(o.img?'':' hide')+'"'+(o.img?' src="'+esc(o.img)+'"':'')+' alt=""></div>';
   return h.replace('<button class="btn" data-sf="save">',function(){return x+'<button class="btn" data-sf="save">'})};/* FOOT-V3 */
-var SOC0=[["fb","Facebook",'<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8.5c0-.3.2-.5.5-.5z"/>'],["ig","Instagram",'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8"/>'],["x","X",'<path d="M4 4l16 16M20 4L4 20"/>'],["wa","WhatsApp",'<path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 8 19.6z"/><path d="M9 9c0 3 3 6 6 6l1.2-1.4-2-1-1 .6c-.8-.4-1.6-1.2-2-2l.6-1-1-2z"/>']];
+var SOC0=[["fb","Facebook",'<path fill="currentColor" stroke="none" d="M13.5 21v-8h2.7l.4-3.2h-3.1V7.8c0-.9.3-1.5 1.6-1.5h1.7V3.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.5V13h2.7v8z"/>'],["ig","Instagram",'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/>'],["x","X",'<path fill="currentColor" stroke="none" d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.8-6.3L5.4 21H2.3l7.2-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/>'],["wa","WhatsApp",'<path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 8 19.6z"/><path d="M9 9c0 3 3 6 6 6l1.2-1.4-2-1-1 .6c-.8-.4-1.6-1.2-2-2l.6-1-1-2z"/>']]; /* SOC-ALWAYS */
 function socUrl(k){var u=(SITE.social&&SITE.social[k])||"";return/^https?:\/\//i.test(u)?u:""}
 function socRead(){var o={};SOC0.forEach(function(s){o[s[0]]=$("sf-so-"+s[0]).value.trim()});return o}
 var ft0=ft;
 ft=function(){var h=ft0();
   var logo='<div class="sf-logo"><img src="'+ICON+'" alt=""><span><b>Sin</b> <i>Fila</i></span></div>';
-  var soc=SOC0.filter(function(s){return socUrl(s[0])}).map(function(s){return'<a class="sf-so" href="'+esc(socUrl(s[0]))+'" target="_blank" rel="noopener noreferrer" aria-label="'+s[1]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s[2]+'</svg></a>'}).join("");
+  var soc=SOC0.map(function(s){return'<a class="sf-so" '+(socUrl(s[0])?'href="'+esc(socUrl(s[0]))+'" target="_blank" rel="noopener noreferrer"':'role="img"')+' aria-label="'+s[1]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s[2]+'</svg></a>'}).join("");
   var flag='<svg viewBox="0 0 24 24" width="22" height="22"><clipPath id="sfc"><circle cx="12" cy="12" r="12"/></clipPath><g clip-path="url(#sfc)"><rect width="24" height="12" fill="#fcd116"/><rect y="12" width="24" height="6" fill="#003893"/><rect y="18" width="24" height="6" fill="#ce1126"/></g></svg>';
   var pin='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
   var lang='<div class="sf-lang"><span class="sf-pill">'+flag+'Es</span><span class="sf-pill">'+pin+'Pereira</span></div>';
   h=h.replace('<div class="sf-in">',function(m){return m+logo});
-  h=h.replace('<div class="sf-bot">',function(m){return m+(soc?'<div class="sf-soc2">'+soc+'</div>':'')+lang});
+  h=h.replace('<div class="sf-bot">',function(m){return m+'<div class="sf-soc2">'+soc+'</div>'+lang});
   h=h.replace(/<p class="sf-legal">[\s\S]*?<\/p>/,function(){return'<p class="sf-legal">\u00a9 '+(new Date().getFullYear())+' Sin Fila. Todos los derechos reservados.</p>'});
   return h};
 var contentView4=contentView;
 contentView=function(){var h=contentView4();
   var x='<h2>Redes sociales (pie de p\u00e1gina)</h2><div class="card"><p class="meta">Pega el enlace completo (https://...). Solo se muestran las redes que tengan enlace.</p>'+SOC0.map(function(s){return'<label for="sf-so-'+s[0]+'">'+s[1]+'</label><input id="sf-so-'+s[0]+'" value="'+esc(socUrl(s[0]))+'" placeholder="https://">'}).join("")+'</div>';
-  return h.replace('<button class="btn" data-sf="save">',function(){return x+'<button class="btn" data-sf="save">'})};/* STEPS-CONTENT */
+  return h.replace('<button class="btn" data-sf="save">',function(){return x+'<button class="btn" data-sf="save">'})};/* HAMBURGER-NAV */
+var landing4=landing;
+landing=function(){var h=landing4();return h.replace('<div class="lnav">',function(){return'<button type="button" class="hb" data-hb="1" aria-label="Men\u00fa" aria-expanded="false"><span></span><span></span><span></span></button><div class="lnav">'})};
+function hbClose(){var h=document.querySelector(".lh");if(h&&h.classList.contains("open")){h.classList.remove("open");var b=h.querySelector("[data-hb]");if(b)b.setAttribute("aria-expanded","false")}}
+document.addEventListener("click",function(e){var t=e.target;if(!t||!t.closest)return;var b=t.closest("[data-hb]"),h=document.querySelector(".lh");
+  if(b&&h){var o=h.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");return}
+  if(h&&h.classList.contains("open")&&(t.closest(".lnav")||!t.closest(".lh")))hbClose()});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")hbClose()});/* STEPS-CONTENT */
 var ST0=[["Pides tu tr\u00e1mite","Eliges el servicio, dejas tu direcci\u00f3n y pagas. El dinero queda retenido."],["Un mensajero lo acepta","Ves su nombre y calificaci\u00f3n, y lo sigues en el mapa."],["Confirmas con un c\u00f3digo","Al llegar, le das un c\u00f3digo de 4 d\u00edgitos para confirmar que es \u00e9l."],["Recibes tu comprobante","Te enviamos foto del comprobante. Al confirmar, liberas el pago y lo calificas."]];
 function stepsRead(){return ST0.map(function(s,i){var o=(SITE.steps&&SITE.steps[i])||{};return{t:$("sf-st-t"+i).value.trim(),d:$("sf-st-d"+i).value.trim(),img:o.img||""}})}
 var landing1=landing;
