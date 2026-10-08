@@ -302,7 +302,22 @@ body #app .lh .lnav .btn.alt+.btn{margin-left:8px}
 .mc h3{color:#fff;font-size:1.15rem;margin:0 0 8px}
 .mc p{color:#b9c9d9;margin:0 0 16px;line-height:1.55;flex:1}
 .mc-l{align-self:flex-start;background:none;border:0;border-bottom:1px solid #fff;color:#fff;font:inherit;font-weight:600;padding:2px 0;cursor:pointer;border-radius:0}
-@media(max-width:899px){.mc-grid{grid-template-columns:1fr}}</style>
+@media(max-width:899px){.mc-grid{grid-template-columns:1fr}}
+/* COOKIE-BANNER-CSS */
+#sf-ck{position:fixed;right:16px;bottom:16px;z-index:90;width:min(440px,calc(100vw - 32px));box-sizing:border-box;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 16px 48px rgba(0,0,0,.28)}
+#sf-ck h2{margin:0 0 8px;font-size:1.3rem;letter-spacing:-.01em}
+#sf-ck p{margin:0 0 16px;font-size:.92rem;line-height:1.5;color:var(--mute)}
+#sf-ck .ck-set{margin:0 0 16px;border-top:1px solid var(--line)}
+#sf-ck .ck-set[hidden]{display:none}
+#sf-ck .ck-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+#sf-ck .ck-row small{display:block;color:var(--mute);font-size:.8rem}
+#sf-ck .ck-row input{width:20px;height:20px;accent-color:var(--acc)}
+#sf-ck .ck-b{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;align-items:center}
+#sf-ck .ck-b button{font:inherit;font-weight:700;border-radius:10px;padding:11px 18px;cursor:pointer;border:0}
+#sf-ck .ck-t{background:none;color:var(--ink);margin-right:auto;padding-left:0}
+#sf-ck .ck-s{background:var(--soft);color:var(--ink)}
+#sf-ck .ck-p{background:var(--ink);color:var(--bg)}
+@media(max-width:560px){#sf-ck{left:12px;right:12px;bottom:12px;width:auto}}</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-card"><img id="sp-img" alt=""></div><div class="sp-bar"><i></i></div></div>
@@ -839,5 +854,28 @@ var rm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches
 function hide(){if(sp.classList.contains("out"))return;sp.classList.add("out");setTimeout(function(){sp.remove()},600)}
 sp.onclick=hide;setTimeout(hide,rm?900:2400)})();
 </script>
-</body>
+<script>
+/* COOKIE-BANNER */
+(function(){
+var KEY="sf_cookies";
+function get(){try{return JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){return null}}
+function set(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}
+function close(){var b=document.getElementById("sf-ck");if(b&&b.parentNode)b.parentNode.removeChild(b)}
+function save(a){set({essential:true,analytics:!!a,ts:Date.now()});close()}
+function open(){
+  if(document.getElementById("sf-ck"))return;
+  var d=document.createElement("div");d.id="sf-ck";d.setAttribute("role","dialog");d.setAttribute("aria-label","Aviso de cookies");
+  d.innerHTML='<h2>Usamos cookies</h2><p>Usamos cookies esenciales para que tu sesi\u00f3n funcione. Con tu permiso, tambi\u00e9n usamos cookies de an\u00e1lisis para mejorar Sin Fila. Puedes cambiar tu elecci\u00f3n cuando quieras.</p>'+
+  '<div class="ck-set" id="ck-set" hidden><label class="ck-row"><span><b>Esenciales</b><small>Inicio de sesi\u00f3n y seguridad. Siempre activas.</small></span><input type="checkbox" checked disabled></label><label class="ck-row"><span><b>An\u00e1lisis</b><small>Nos ayudan a entender qu\u00e9 mejorar.</small></span><input type="checkbox" id="ck-an"></label></div>'+
+  '<div class="ck-b"><button type="button" class="ck-t" id="ck-st">Configurar</button><button type="button" class="ck-s" id="ck-rj">Rechazar</button><button type="button" class="ck-p" id="ck-ac">Aceptar</button></div>';
+  document.body.appendChild(d);
+  document.getElementById("ck-ac").onclick=function(){save(true)};
+  document.getElementById("ck-rj").onclick=function(){save(false)};
+  document.getElementById("ck-st").onclick=function(){
+    var s=document.getElementById("ck-set");
+    if(s.hidden){s.hidden=false;this.textContent="Guardar mi elecci\u00f3n"}else{save(document.getElementById("ck-an").checked)}}}
+window.sfConsent=get;window.sfCookies=open;
+if(!get())open();
+})();
+</script></body>
 </html>
