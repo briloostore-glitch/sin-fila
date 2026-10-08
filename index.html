@@ -317,7 +317,19 @@ body #app .lh .lnav .btn.alt+.btn{margin-left:8px}
 #sf-ck .ck-t{background:none;color:var(--ink);margin-right:auto;padding-left:0}
 #sf-ck .ck-s{background:var(--soft);color:var(--ink)}
 #sf-ck .ck-p{background:var(--ink);color:var(--bg)}
-@media(max-width:560px){#sf-ck{left:12px;right:12px;bottom:12px;width:auto}}</style>
+@media(max-width:560px){#sf-ck{left:12px;right:12px;bottom:12px;width:auto}}
+/* BIZ-SECTION-CSS */
+.biz{background:#0a1a2b;color:#fff;box-shadow:0 0 0 100vmax #0a1a2b;clip-path:inset(0 -100vmax);padding:24px 0 72px;margin:-56px 0 56px}
+.biz-in{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,80px);align-items:center}
+.biz-m{position:relative;padding-bottom:48px}
+.biz-m img,.biz-ph{width:min(460px,100%);aspect-ratio:1/1;object-fit:cover;border-radius:50%;display:block;margin-left:clamp(0px,3vw,40px)}
+.biz-ph{background:#12263b}
+.biz-ts{position:absolute;left:0;bottom:0;display:flex;gap:14px}
+.biz-t{width:86px;height:86px;border-radius:20px;background:linear-gradient(180deg,#14283d,#0d1d2f);border:2px solid rgba(255,255,255,.18);color:#2dd4b4;display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.biz-tx h2{color:#fff;font-size:clamp(1.7rem,2.8vw,2.6rem);line-height:1.15;letter-spacing:-.02em;margin:0 0 16px}
+.biz-tx p{color:#c3d2e0;line-height:1.6;margin:0 0 24px;max-width:52ch}
+.biz-b{background:#fff;color:#0a1a2b;border:0;border-radius:10px;padding:13px 22px;font:inherit;font-weight:700;cursor:pointer}
+@media(max-width:899px){.biz-in{grid-template-columns:1fr}.biz-t{width:70px;height:70px}}</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-card"><img id="sp-img" alt=""></div><div class="sp-bar"><i></i></div></div>
@@ -668,12 +680,12 @@ document.addEventListener("change",function(e){var i=e.target;if(!i||!i.getAttri
   sb.storage.from("site").upload(path,f,{upsert:true,contentType:f.type}).then(function(r){
     if(r.error){toast("Error: "+r.error.message);return}
     var url=sb.storage.from("site").getPublicUrl(path).data.publicUrl;
-    if(k.indexOf("more")===0){SITE.more=SITE.more||[];var mi=parseInt(k.slice(4),10);SITE.more[mi]=SITE.more[mi]||{};SITE.more[mi].img=url}else if(k.indexOf("step")===0){SITE.steps=SITE.steps||[];var si=parseInt(k.slice(4),10);SITE.steps[si]=SITE.steps[si]||{};SITE.steps[si].img=url}else if(k==="hero")SITE.hero_img=url;else{SITE.svc=SITE.svc||{};SITE.svc[k]=SITE.svc[k]||{};SITE.svc[k].img=url}
+    if(k==="biz"){SITE.biz=SITE.biz||{};SITE.biz.img=url}else if(k.indexOf("more")===0){SITE.more=SITE.more||[];var mi=parseInt(k.slice(4),10);SITE.more[mi]=SITE.more[mi]||{};SITE.more[mi].img=url}else if(k.indexOf("step")===0){SITE.steps=SITE.steps||[];var si=parseInt(k.slice(4),10);SITE.steps[si]=SITE.steps[si]||{};SITE.steps[si].img=url}else if(k==="hero")SITE.hero_img=url;else{SITE.svc=SITE.svc||{};SITE.svc[k]=SITE.svc[k]||{};SITE.svc[k].img=url}
     var pv=$("sf-pv-"+k);if(pv){pv.src=url;pv.classList.remove("hide")}
     toast("Imagen subida. Pulsa Guardar cambios.")}).catch(function(x){toast("Error: "+x.message)})},true);
 document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest('[data-sf="save"]');if(!b)return;e.stopPropagation();
   if(!sb){toast("Sin conexion a Supabase");return}
-  var v={more:moreRead(),steps:stepsRead(),hero_t:$("sf-ht").value.trim(),hero_s:$("sf-hs").value.trim(),hero_img:SITE.hero_img||"",svc:{}};
+  var v={biz:bizRead(),more:moreRead(),steps:stepsRead(),hero_t:$("sf-ht").value.trim(),hero_s:$("sf-hs").value.trim(),hero_img:SITE.hero_img||"",svc:{}};
   T.forEach(function(t,i){var o=(SITE.svc&&SITE.svc[t.id])||{},fe=parseInt($("sf-f-"+t.id).value,10);
     v.svc[t.id]={n:$("sf-n-"+t.id).value.trim(),fee:(isNaN(fe)||fe<0)?t.fee:fe,d:$("sf-d-"+t.id).value.trim(),img:o.img||""}});
   sb.from("site_content").upsert({key:"landing",value:v,updated_at:new Date().toISOString()}).then(function(r){
@@ -692,6 +704,18 @@ var contentView2=contentView;
 contentView=function(){var h=contentView2(),x='<h2>M\u00e1s maneras de usar Sin Fila</h2>';
   M0.forEach(function(m,i){var o=(SITE.more&&SITE.more[i])||{};
     x+='<div class="card"><b>Tarjeta '+(i+1)+'</b><label for="sf-mo-t'+i+'">T\u00edtulo</label><input id="sf-mo-t'+i+'" value="'+esc(o.t||m[0])+'"><label for="sf-mo-d'+i+'">Texto</label><textarea id="sf-mo-d'+i+'">'+esc(o.d||m[1])+'</textarea><label for="sf-mo-l'+i+'">Texto del enlace</label><input id="sf-mo-l'+i+'" value="'+esc(o.l||m[2])+'"><label>Imagen</label><input type="file" accept="image/*" data-sf-file="more'+i+'"><img id="sf-pv-more'+i+'" class="pv'+(o.img?'':' hide')+'"'+(o.img?' src="'+esc(o.img)+'"':'')+' alt=""></div>'});
+  return h.replace('<button class="btn" data-sf="save">',function(){return x+'<button class="btn" data-sf="save">'})};/* BIZ-SECTION */
+var B0={t:"Todo Sin Fila, pensado para tu empresa",d:"Delega los tr\u00e1mites recurrentes de tu negocio: radicaciones, pagos y certificados. Seguimiento de cada tr\u00e1mite con fotos y comprobantes, y menos tiempo perdido en filas.",l:"Hablar con nosotros"};
+var BI=['<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>','<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM8.5 12h7M8.5 16h5"/>'];
+function bizRead(){var o=SITE.biz||{};return{t:$("sf-bz-t").value.trim(),d:$("sf-bz-d").value.trim(),l:$("sf-bz-l").value.trim(),img:o.img||""}}
+function bizHtml(){var o=SITE.biz||{};
+  var ic=BI.map(function(p){return'<div class="biz-t"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg></div>'}).join("");
+  return'<section class="biz"><div class="biz-in"><div class="biz-m">'+(o.img?'<img src="'+esc(o.img)+'" alt="">':'<div class="biz-ph"></div>')+'<div class="biz-ts">'+ic+'</div></div><div class="biz-tx"><h2>'+esc(o.t||B0.t)+'</h2><p>'+esc(o.d||B0.d)+'</p><button class="biz-b" data-a="goto" data-v="reg" data-r="c">'+esc(o.l||B0.l)+'</button></div></div></section>'}
+var landing3=landing;
+landing=function(){var h=landing3(),k='<div class="band">',i=h.indexOf(k);if(i<0)return h;return h.slice(0,i)+bizHtml()+h.slice(i)};
+var contentView3=contentView;
+contentView=function(){var h=contentView3(),o=SITE.biz||{};
+  var x='<h2>Sin Fila para empresas</h2><div class="card"><label for="sf-bz-t">T\u00edtulo</label><input id="sf-bz-t" value="'+esc(o.t||B0.t)+'"><label for="sf-bz-d">Texto</label><textarea id="sf-bz-d">'+esc(o.d||B0.d)+'</textarea><label for="sf-bz-l">Texto del bot\u00f3n</label><input id="sf-bz-l" value="'+esc(o.l||B0.l)+'"><label>Imagen (cuadrada)</label><input type="file" accept="image/*" data-sf-file="biz"><img id="sf-pv-biz" class="pv'+(o.img?'':' hide')+'"'+(o.img?' src="'+esc(o.img)+'"':'')+' alt=""></div>';
   return h.replace('<button class="btn" data-sf="save">',function(){return x+'<button class="btn" data-sf="save">'})};/* STEPS-CONTENT */
 var ST0=[["Pides tu tr\u00e1mite","Eliges el servicio, dejas tu direcci\u00f3n y pagas. El dinero queda retenido."],["Un mensajero lo acepta","Ves su nombre y calificaci\u00f3n, y lo sigues en el mapa."],["Confirmas con un c\u00f3digo","Al llegar, le das un c\u00f3digo de 4 d\u00edgitos para confirmar que es \u00e9l."],["Recibes tu comprobante","Te enviamos foto del comprobante. Al confirmar, liberas el pago y lo calificas."]];
 function stepsRead(){return ST0.map(function(s,i){var o=(SITE.steps&&SITE.steps[i])||{};return{t:$("sf-st-t"+i).value.trim(),d:$("sf-st-d"+i).value.trim(),img:o.img||""}})}
