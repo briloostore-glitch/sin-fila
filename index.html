@@ -391,7 +391,19 @@ body #app:has(> nav) > .pf{grid-column:1/-1}
 .pf-r span{color:var(--mute)}
 .pf-danger{border-color:#f1c7c7}
 .pf-del{color:#b42318!important;border-color:#f1c7c7!important}
-@media(max-width:899px){.pf-g{grid-template-columns:1fr}.pf-head{flex-direction:column;align-items:flex-start}}</style>
+@media(max-width:899px){.pf-g{grid-template-columns:1fr}.pf-head{flex-direction:column;align-items:flex-start}}
+/* PROFILE-PRO-CSS */
+.pf-head{flex-wrap:wrap}
+.pf-id{flex:1;min-width:200px}
+.pf-bs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pf-b{display:inline-block;font-size:.78rem;font-weight:600;padding:3px 10px;border-radius:8px;background:var(--soft);color:var(--acc)}
+.pf-b.wait{background:transparent;color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn)}
+.pf-ks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 20px}
+.pf-k{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.pf-k span{color:var(--mute);font-size:.82rem}
+.pf-k b{font-size:1.35rem;overflow-wrap:anywhere}
+.pf-p{margin:0 0 12px}
+@media(max-width:600px){.pf-ks{grid-template-columns:1fr}}</style>
 <link rel="icon" type="image/png" href="/sf-icon.png"><link rel="apple-touch-icon" href="/sf-icon.png">
 </head>
 <body>
@@ -804,15 +816,27 @@ function hbClose(){var h=document.querySelector(".lh");if(h&&h.classList.contain
 document.addEventListener("click",function(e){var t=e.target;if(!t||!t.closest)return;var b=t.closest("[data-hb]"),h=document.querySelector(".lh");
   if(b&&h){var o=h.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");return}
   if(h&&h.classList.contains("open")&&(t.closest(".lnav")||!t.closest(".lh")))hbClose()});
-document.addEventListener("keydown",function(e){if(e.key==="Escape")hbClose()});/* PROFILE-SAAS */
+document.addEventListener("keydown",function(e){if(e.key==="Escape")hbClose()});/* PROFILE-PRO */
 profile=function(u){
   var rol=u.role==="c"?"Cliente":u.role==="m"?"Mensajero":"Administrador";
   function row(k,v){return'<div class="pf-r"><span>'+k+'</span><b>'+v+'</b></div>'}
-  var info=row("Nombre",esc(u.name))+row("Contacto",esc(u.phone))+row("Rol",rol)+(u.role==="m"?row("Calificaci\u00f3n",avgT(u.id)):"");
+  function met(k,v){return'<div class="pf-k"><span>'+k+'</span><b>'+v+'</b></div>'}
+  var mine=O.filter(function(o){return u.role==="m"?o.msgr===u.id:u.role==="c"?o.uid===u.id:true});
+  var done=mine.filter(function(o){return o.state===4}).length,act=mine.filter(function(o){return o.state>=1&&o.state<=3}).length,pend=0;
+  mine.forEach(function(o){if(o.state===4&&!o.paid){var t=tr(o.tid);if(t)pend+=t.fee*(1-COM)+(o.entity||0)}});
+  var ks=u.role==="m"?met("Tr\u00e1mites hechos",done)+met("Calificaci\u00f3n",avgT(u.id))+met("Por cobrar",cop(pend)):u.role==="c"?met("Pedidos",mine.length)+met("En curso",act)+met("Completados",done):met("Pedidos",O.length)+met("Usuarios",U.length)+met("Por pagar a mensajeros",cop(pend));
+  var st=u.role==="m"?(u.status==="ok"?'<span class="pf-b">Cuenta aprobada</span>':'<span class="pf-b wait">En revisi\u00f3n</span>'):"";
+  var city=u.city?'<span class="pf-b">'+esc(u.city)+"</span>":"";
+  var info=row("Nombre",esc(u.name))+row("Contacto",esc(u.phone))+(u.tel?row("Tel\u00e9fono",esc(u.tel)):"")+(u.city?row("Ciudad",esc(u.city)):"")+(u.ced?row("C\u00e9dula",esc(u.ced)):"")+row("Rol",rol);
+  var cuenta='<div class="card pf-c"><h3>Datos de la cuenta</h3>'+info+"</div>";
+  var pay=(u.role==="m"&&u.pay)?'<div class="card pf-c"><h3>Datos de cobro</h3>'+row("M\u00e9todo",esc(u.pay.met))+row("N\u00famero",esc(u.pay.num))+"</div>":"";
+  var nveh=Object.keys(u.veh||{}).length;
+  var ver=u.role==="m"?'<div class="card pf-c"><h3>Verificaci\u00f3n</h3>'+row("Documento de identidad",u.idph?"Cargado":"Pendiente")+row("Referencia personal",u.ref?esc(u.ref):"Pendiente")+row("Estado de la cuenta",u.status==="ok"?"Aprobada":"En revisi\u00f3n")+row("Veh\u00edculo",nveh?"Con veh\u00edculo":"A pie o transporte p\u00fablico")+"</div>":"";
   var idc=u.idph?'<div class="card pf-c"><h3>Documento de identidad</h3><img class="pv" src="'+u.idph+'" alt="Foto de identidad"></div>':"";
-  var pay=(u.role==="m"&&u.pay)?'<div class="card pf-c"><h3>Datos de cobro</h3>'+row("M\u00e9todo",esc(u.pay.met))+row("N\u00famero",esc(u.pay.num))+'</div>':"";
-  var del=u.role==="a"?"":'<div class="card pf-c pf-danger"><h3>Zona de peligro</h3><p class="meta">Borra tu cuenta y tus datos. No se puede deshacer.</p><button class="btn alt pf-del" data-a="del">Eliminar mi cuenta y mis datos</button></div>';
-  return'<div class="pf"><div class="card pf-head">'+av(u.id)+'<div><h1>'+esc(u.name)+'</h1><div class="meta">'+esc(u.phone)+'</div><span class="badge">'+rol+'</span></div></div><div class="pf-g"><div class="pf-col"><div class="card pf-c"><h3>Datos de la cuenta</h3>'+info+'</div>'+pay+idc+'</div><div class="pf-col"><div class="card pf-c"><h3>Foto de perfil</h3><p class="meta">Esta foto la ve la otra persona en tu tr\u00e1mite.</p>'+phBox("av","Cambiar mi foto de perfil","user")+'<button class="btn alt" data-a="setav">Guardar foto de perfil</button></div><div class="card pf-c"><h3>Sesi\u00f3n</h3><button class="btn alt" data-a="out">Cerrar sesi\u00f3n</button></div>'+del+'</div></div></div>'};/* STEPS-CONTENT */
+  var foto='<div class="card pf-c"><h3>Foto de perfil</h3><p class="meta pf-p">Esta foto la ve la otra persona en tu tr\u00e1mite.</p>'+phBox("av","Cambiar mi foto de perfil","user")+'<button class="btn alt" data-a="setav">Guardar foto de perfil</button></div>';
+  var ses='<div class="card pf-c"><h3>Privacidad y sesi\u00f3n</h3><p class="meta pf-p">Tu historial de pedidos se conserva. Si quieres que borremos tus datos personales, escr\u00edbele al administrador.</p><button class="btn alt" data-a="out">Cerrar sesi\u00f3n</button></div>';
+  return'<div class="pf"><div class="card pf-head">'+av(u.id)+'<div class="pf-id"><h1>'+esc(u.name)+'</h1><div class="meta">'+esc(u.phone)+'</div><div class="pf-bs"><span class="pf-b">'+rol+"</span>"+st+city+'</div></div></div><div class="pf-ks">'+ks+'</div><div class="pf-g"><div class="pf-col">'+cuenta+pay+ver+'</div><div class="pf-col">'+foto+idc+ses+"</div></div></div>"};
+/* STEPS-CONTENT */
 var ST0=[["Pides tu tr\u00e1mite","Eliges el servicio, dejas tu direcci\u00f3n y pagas. El dinero queda retenido."],["Un mensajero lo acepta","Ves su nombre y calificaci\u00f3n, y lo sigues en el mapa."],["Confirmas con un c\u00f3digo","Al llegar, le das un c\u00f3digo de 4 d\u00edgitos para confirmar que es \u00e9l."],["Recibes tu comprobante","Te enviamos foto del comprobante. Al confirmar, liberas el pago y lo calificas."]];
 function stepsRead(){return ST0.map(function(s,i){var o=(SITE.steps&&SITE.steps[i])||{};return{t:$("sf-st-t"+i).value.trim(),d:$("sf-st-d"+i).value.trim(),img:o.img||""}})}
 var landing1=landing;
