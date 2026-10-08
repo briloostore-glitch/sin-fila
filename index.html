@@ -423,7 +423,10 @@ body #app:has(> nav) > .pf{grid-column:1/-1}
 .sf-pr{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.92rem}
 .sf-pr span{color:var(--mute)}
 .sf-pr.t{border-top:1px solid var(--line);margin-top:4px;padding-top:9px}
-.sf-pr.t span{color:inherit;font-weight:600}</style>
+.sf-pr.t span{color:inherit;font-weight:600}
+/* ADM-PRO-CSS */
+.sf-adm{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.sf-bd{color:var(--warn);font-size:.82rem;font-weight:600}</style>
 <link rel="icon" type="image/png" href="/sf-icon.png"><link rel="apple-touch-icon" href="/sf-icon.png">
 </head>
 <body>
@@ -458,7 +461,7 @@ var q=o._ts?sb.from("sf_sync_orders").update({courier_sid:ms,state:o.state||0,da
 jobs.push(q.then(function(r){if(r.error){var c=r.error.code;if(c==="23505"||c==="42501")sfSent[o.rk]=js;return}if(r.data&&r.data[0]){o._ts=r.data[0].updated_at;sfSent[o.rk]=js}else{sfSent[o.rk]=js}},function(){}))});
 return Promise.all(jobs)}
 function sfPull(){return sb.from("sf_sync_orders").select("rk,data,updated_at").gt("updated_at",sfCur).order("updated_at",{ascending:true}).limit(200).then(function(r){if(r.error||!r.data||!r.data.length)return;var cg=false;
-r.data.forEach(function(row){sfCur=row.updated_at;var d=row.data||{};var o=O.filter(function(z){return z.rk===row.rk})[0];if(o&&o._ts===row.updated_at)return;
+r.data.forEach(function(row){sfCur=row.updated_at;var d=row.data||{};if(d.arch){var ix=-1;O.forEach(function(z,j){if(z.rk===row.rk)ix=j});if(ix>-1){O.splice(ix,1);cg=true}return}var o=O.filter(function(z){return z.rk===row.rk})[0];if(o&&o._ts===row.updated_at)return;
 if(!o){var mx=0,tk=false;O.forEach(function(z){if(+z.id>mx)mx=+z.id;if(z.id===d.id)tk=true});o={id:(d.id&&!tk)?d.id:mx+1,rk:row.rk};O.push(o)}
 for(var k in d){if(k==="csid"||k==="msid"||k==="cname"||k==="mname"||k==="id")continue;o[k]=d[k]}
 var cu=sfUid(d.csid,d.cname,"c");if(cu)o.uid=cu;o.msgr=d.msid?sfUid(d.msid,d.mname,"m"):null;
@@ -524,6 +527,20 @@ function sfTrk(o){try{
   var pay=mine?pr("Ganas",cop(fee*(1-COM)))+pr("Reembolso de la entidad",cop(ent)):pr("Servicio Sin Fila",cop(fee))+pr("Costo de la entidad",cop(ent))+'<div class="sf-pr t"><span>Total</span><b>'+cop(fee+ent)+"</b></div>";
   return'<div class="sf-trk">'+cr+'<div class="sf-tl">'+steps+'</div><div class="sf-pw">'+pay+"</div></div>"}catch(e){return""}}
 try{if(typeof mapBox==="function"){var sfMb0=mapBox;mapBox=function(o){return sfMb0(o)+sfTrk(o)}}}catch(e){}
+/* ADM-PRO */
+var sfBl={};
+function sfBlLoad(){try{if(typeof sb==="undefined"||!sb)return;sb.auth.getSession().then(function(r){var us=r.data&&r.data.session&&r.data.session.user;if(!us)return;var me=U.filter(function(z){return z.sid===us.id})[0];
+if(me&&me.role==="a"){sb.from("sf_blocked").select("user_id,active").then(function(q){if(!q.data)return;var m={},ch=false;q.data.forEach(function(b){m[b.user_id]=b.active;if(sfBl[b.user_id]!==b.active)ch=true});sfBl=m;if(ch){try{render()}catch(e){}}},function(){})}
+else{sb.from("sf_blocked").select("active").eq("user_id",us.id).maybeSingle().then(function(q){if(q&&q.data&&q.data.active){sb.auth.signOut().then(function(){},function(){});ses=null;try{home=true;nav="h"}catch(e){}try{save()}catch(e){}if(typeof toast==="function")toast("Tu cuenta fue bloqueada por el administrador.");try{render()}catch(e){}}},function(){})}
+},function(){})}catch(e){}}
+setInterval(sfBlLoad,10000);setTimeout(sfBlLoad,2500);
+try{if(typeof mdet==="function"){var sfMd0=mdet;mdet=function(x){var h=sfMd0(x)||"";if(!x||!x.sid||x.role==="a")return h;var b=sfBl[x.sid]===true;return h+'<div class="sf-adm"><button class="btn alt sm" data-sfu="'+(b?"unb":"blk")+'" data-sid="'+x.sid+'">'+(b?"Desbloquear":"Bloquear")+"</button>"+(b?'<span class="sf-bd">Bloqueado</span>':"")+"</div>"}}}catch(e){}
+try{if(typeof mapBox==="function"){var sfMb1=mapBox;mapBox=function(o){var h=sfMb1(o);try{var v=usr(ses)||{};if(v.role==="a")h+='<div class="sf-adm"><button class="btn alt sm" data-sfo="del" data-id="'+o.id+'">Eliminar pedido</button></div>'}catch(e){}return h}}}catch(e){}
+document.addEventListener("click",function(ev){try{var b=ev.target&&ev.target.closest?ev.target.closest("[data-sfu],[data-sfo]"):null;if(!b)return;ev.stopImmediatePropagation();ev.preventDefault();
+if(b.getAttribute("data-sfu")){var sid=b.getAttribute("data-sid"),blk=b.getAttribute("data-sfu")==="blk";if(!confirm(blk?"\u00bfBloquear este usuario? No podr\u00e1 entrar ni operar. Su historial se conserva.":"\u00bfDesbloquear este usuario?"))return;sb.auth.getSession().then(function(r){var us=r.data&&r.data.session&&r.data.session.user;if(!us)return;sb.from("sf_blocked").upsert({user_id:sid,active:blk,by_admin:us.id,updated_at:new Date().toISOString()},{onConflict:"user_id"}).then(function(q){if(q.error){toast("No se pudo cambiar el bloqueo.");return}sfBl[sid]=blk;toast(blk?"Usuario bloqueado.":"Usuario desbloqueado.");render()})});return}
+var id=b.getAttribute("data-id"),o=O.filter(function(z){return String(z.id)===id})[0];if(!o)return;if(!confirm("\u00bfEliminar este pedido de las listas? El historial queda guardado."))return;
+o.arch=true;if(!o.rk){O.splice(O.indexOf(o),1)}save();render();try{sfSync();setTimeout(sfSync,1500)}catch(e){}
+}catch(e){}},true);
 function sfRole(){if(typeof sb==="undefined"||!sb)return;sb.auth.getSession().then(function(r){var u=r.data&&r.data.session&&r.data.session.user;if(!u)return;sb.from("profiles").select("role").eq("id",u.id).maybeSingle().then(function(q){var rr=q.data&&q.data.role,nr=rr==="admin"?"a":rr==="courier"?"m":null;if(!nr)return;var f=U.filter(function(z){return z.sid===u.id})[0];if(!f)return;var md=u.user_metadata||{},cg=false;if(f.role!==nr){f.role=nr;cg=true}if(nr==="m"){if(f.status!=="ok"){f.status="ok";cg=true}if(md.full_name&&f.name!==md.full_name){f.name=md.full_name;cg=true}if(md.ced&&f.ced!==md.ced){f.ced=md.ced;cg=true}if(md.ref&&f.ref!==md.ref){f.ref=md.ref;cg=true}if(md.pay_num&&!f.pay){f.pay={met:md.pay||"Nequi",num:md.pay_num};cg=true}if(!f.veh){f.veh={};cg=true}}if(cg){save();render()}},function(){})},function(){})}var sfBusy=false,sfTm=null,sfLast=null,sfWho=null;
 function sfUid(){try{return crypto.randomUUID()}catch(e){return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==="x"?r:(r&3|8)).toString(16)})}}
 function sfH(s){var h=5381,i=s.length;while(i){h=(h*33)^s.charCodeAt(--i)}return (h>>>0)+":"+s.length}
