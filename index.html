@@ -329,7 +329,21 @@ body #app .lh .lnav .btn.alt+.btn{margin-left:8px}
 .biz-tx h2{color:#fff;font-size:clamp(1.7rem,2.8vw,2.6rem);line-height:1.15;letter-spacing:-.02em;margin:0 0 16px}
 .biz-tx p{color:#c3d2e0;line-height:1.6;margin:0 0 24px;max-width:52ch}
 .biz-b{background:#fff;color:#0a1a2b;border:0;border-radius:10px;padding:13px 22px;font:inherit;font-weight:700;cursor:pointer}
-@media(max-width:899px){.biz-in{grid-template-columns:1fr}.biz-t{width:70px;height:70px}}</style>
+@media(max-width:899px){.biz-in{grid-template-columns:1fr}.biz-t{width:70px;height:70px}}
+/* FOOT-V3-CSS */
+body #app .sf-foot .sf-logo{grid-column:1/-1;grid-row:1;display:flex;align-items:center;gap:12px;color:#fff;font-size:1.5rem;font-weight:800}
+body #app .sf-foot .sf-logo img{width:42px;height:42px;border-radius:10px;background:#fff;padding:3px;object-fit:contain}
+body #app .sf-foot .sf-logo i{font-style:normal;color:#2dd4b4}
+body #app .sf-foot .sf-grid{grid-row:2!important}
+body #app .sf-foot .sf-soc,body #app .sf-foot .sf-loc{display:none!important}
+body #app .sf-foot .sf-soc2{grid-column:1;grid-row:3;display:flex;gap:12px;flex-wrap:wrap}
+body #app .sf-foot .sf-so{width:42px;height:42px;border-radius:50%;background:#fff;color:#0a1a2b;display:grid;place-items:center}
+body #app .sf-foot .sf-so svg{width:20px;height:20px}
+body #app .sf-foot .sf-lang{grid-column:2;grid-row:3;display:flex;gap:10px;justify-content:flex-end;align-items:center}
+body #app .sf-foot .sf-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0a1a2b;border-radius:999px;padding:8px 16px;font-weight:700}
+body #app .sf-foot .sf-apps{grid-column:1/-1!important;grid-row:4!important}
+body #app .sf-foot .sf-legal{grid-row:5!important}
+@media(max-width:700px){body #app .sf-foot .sf-lang{grid-column:1;grid-row:4;justify-content:flex-start}body #app .sf-foot .sf-apps{grid-row:5!important}body #app .sf-foot .sf-legal{grid-row:6!important}}</style>
 <link rel="icon" type="image/png" href="/sf-icon.png"><link rel="apple-touch-icon" href="/sf-icon.png">
 </head>
 <body>
@@ -686,7 +700,7 @@ document.addEventListener("change",function(e){var i=e.target;if(!i||!i.getAttri
     toast("Imagen subida. Pulsa Guardar cambios.")}).catch(function(x){toast("Error: "+x.message)})},true);
 document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest('[data-sf="save"]');if(!b)return;e.stopPropagation();
   if(!sb){toast("Sin conexion a Supabase");return}
-  var v={biz:bizRead(),more:moreRead(),steps:stepsRead(),hero_t:$("sf-ht").value.trim(),hero_s:$("sf-hs").value.trim(),hero_img:SITE.hero_img||"",svc:{}};
+  var v={social:socRead(),biz:bizRead(),more:moreRead(),steps:stepsRead(),hero_t:$("sf-ht").value.trim(),hero_s:$("sf-hs").value.trim(),hero_img:SITE.hero_img||"",svc:{}};
   T.forEach(function(t,i){var o=(SITE.svc&&SITE.svc[t.id])||{},fe=parseInt($("sf-f-"+t.id).value,10);
     v.svc[t.id]={n:$("sf-n-"+t.id).value.trim(),fee:(isNaN(fe)||fe<0)?t.fee:fe,d:$("sf-d-"+t.id).value.trim(),img:o.img||""}});
   sb.from("site_content").upsert({key:"landing",value:v,updated_at:new Date().toISOString()}).then(function(r){
@@ -717,6 +731,24 @@ landing=function(){var h=landing3(),k='<div class="band">',i=h.indexOf(k);if(i<0
 var contentView3=contentView;
 contentView=function(){var h=contentView3(),o=SITE.biz||{};
   var x='<h2>Sin Fila para empresas</h2><div class="card"><label for="sf-bz-t">T\u00edtulo</label><input id="sf-bz-t" value="'+esc(o.t||B0.t)+'"><label for="sf-bz-d">Texto</label><textarea id="sf-bz-d">'+esc(o.d||B0.d)+'</textarea><label for="sf-bz-l">Texto del bot\u00f3n</label><input id="sf-bz-l" value="'+esc(o.l||B0.l)+'"><label>Imagen (cuadrada)</label><input type="file" accept="image/*" data-sf-file="biz"><img id="sf-pv-biz" class="pv'+(o.img?'':' hide')+'"'+(o.img?' src="'+esc(o.img)+'"':'')+' alt=""></div>';
+  return h.replace('<button class="btn" data-sf="save">',function(){return x+'<button class="btn" data-sf="save">'})};/* FOOT-V3 */
+var SOC0=[["fb","Facebook",'<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8.5c0-.3.2-.5.5-.5z"/>'],["ig","Instagram",'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8"/>'],["x","X",'<path d="M4 4l16 16M20 4L4 20"/>'],["wa","WhatsApp",'<path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 8 19.6z"/><path d="M9 9c0 3 3 6 6 6l1.2-1.4-2-1-1 .6c-.8-.4-1.6-1.2-2-2l.6-1-1-2z"/>']];
+function socUrl(k){var u=(SITE.social&&SITE.social[k])||"";return/^https?:\/\//i.test(u)?u:""}
+function socRead(){var o={};SOC0.forEach(function(s){o[s[0]]=$("sf-so-"+s[0]).value.trim()});return o}
+var ft0=ft;
+ft=function(){var h=ft0();
+  var logo='<div class="sf-logo"><img src="'+ICON+'" alt=""><span><b>Sin</b> <i>Fila</i></span></div>';
+  var soc=SOC0.filter(function(s){return socUrl(s[0])}).map(function(s){return'<a class="sf-so" href="'+esc(socUrl(s[0]))+'" target="_blank" rel="noopener noreferrer" aria-label="'+s[1]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s[2]+'</svg></a>'}).join("");
+  var flag='<svg viewBox="0 0 24 24" width="22" height="22"><clipPath id="sfc"><circle cx="12" cy="12" r="12"/></clipPath><g clip-path="url(#sfc)"><rect width="24" height="12" fill="#fcd116"/><rect y="12" width="24" height="6" fill="#003893"/><rect y="18" width="24" height="6" fill="#ce1126"/></g></svg>';
+  var pin='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  var lang='<div class="sf-lang"><span class="sf-pill">'+flag+'Es</span><span class="sf-pill">'+pin+'Pereira</span></div>';
+  h=h.replace('<div class="sf-in">',function(m){return m+logo});
+  h=h.replace('<div class="sf-bot">',function(m){return m+(soc?'<div class="sf-soc2">'+soc+'</div>':'')+lang});
+  h=h.replace(/<p class="sf-legal">[\s\S]*?<\/p>/,function(){return'<p class="sf-legal">\u00a9 '+(new Date().getFullYear())+' Sin Fila. Todos los derechos reservados.</p>'});
+  return h};
+var contentView4=contentView;
+contentView=function(){var h=contentView4();
+  var x='<h2>Redes sociales (pie de p\u00e1gina)</h2><div class="card"><p class="meta">Pega el enlace completo (https://...). Solo se muestran las redes que tengan enlace.</p>'+SOC0.map(function(s){return'<label for="sf-so-'+s[0]+'">'+s[1]+'</label><input id="sf-so-'+s[0]+'" value="'+esc(socUrl(s[0]))+'" placeholder="https://">'}).join("")+'</div>';
   return h.replace('<button class="btn" data-sf="save">',function(){return x+'<button class="btn" data-sf="save">'})};/* STEPS-CONTENT */
 var ST0=[["Pides tu tr\u00e1mite","Eliges el servicio, dejas tu direcci\u00f3n y pagas. El dinero queda retenido."],["Un mensajero lo acepta","Ves su nombre y calificaci\u00f3n, y lo sigues en el mapa."],["Confirmas con un c\u00f3digo","Al llegar, le das un c\u00f3digo de 4 d\u00edgitos para confirmar que es \u00e9l."],["Recibes tu comprobante","Te enviamos foto del comprobante. Al confirmar, liberas el pago y lo calificas."]];
 function stepsRead(){return ST0.map(function(s,i){var o=(SITE.steps&&SITE.steps[i])||{};return{t:$("sf-st-t"+i).value.trim(),d:$("sf-st-d"+i).value.trim(),img:o.img||""}})}
