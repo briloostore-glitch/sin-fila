@@ -403,7 +403,27 @@ body #app:has(> nav) > .pf{grid-column:1/-1}
 .pf-k span{color:var(--mute);font-size:.82rem}
 .pf-k b{font-size:1.35rem;overflow-wrap:anywhere}
 .pf-p{margin:0 0 12px}
-@media(max-width:600px){.pf-ks{grid-template-columns:1fr}}</style>
+@media(max-width:600px){.pf-ks{grid-template-columns:1fr}}
+/* TRK-PRO-CSS */
+.sf-trk{margin:12px 0 4px}
+.sf-cr{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.sf-cr b{display:block}
+.sf-cr span{color:var(--mute);font-size:.85rem}
+.sf-tl{border-top:1px solid var(--line);padding:14px 0 2px 6px}
+.sf-st{position:relative;padding:0 0 14px 18px;border-left:2px solid var(--line)}
+.sf-st:last-child{border-left-color:transparent;padding-bottom:4px}
+.sf-st::before{content:"";position:absolute;left:-6px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--card);box-shadow:0 0 0 2px var(--line)}
+.sf-st.d{border-left-color:var(--acc)}
+.sf-st.d::before{background:var(--acc);box-shadow:0 0 0 2px var(--acc)}
+.sf-st.c::before{box-shadow:0 0 0 2px var(--acc)}
+.sf-st b{display:block;font-size:.92rem}
+.sf-st.c b{color:var(--acc)}
+.sf-st span{color:var(--mute);font-size:.82rem}
+.sf-pw{border-top:1px solid var(--line);padding-top:8px}
+.sf-pr{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.92rem}
+.sf-pr span{color:var(--mute)}
+.sf-pr.t{border-top:1px solid var(--line);margin-top:4px;padding-top:9px}
+.sf-pr.t span{color:inherit;font-weight:600}</style>
 <link rel="icon" type="image/png" href="/sf-icon.png"><link rel="apple-touch-icon" href="/sf-icon.png">
 </head>
 <body>
@@ -493,6 +513,17 @@ fetch("https://router.project-osrm.org/route/v1/driving/"+c[1]+","+c[0]+";"+tg[1
 function sfRmTick(){try{if(typeof sb==="undefined"||!sb||!document.querySelectorAll)return;var els=document.querySelectorAll(".sf-rm[data-oid]");if(!els.length)return;sfRmLeaflet(function(){Array.prototype.forEach.call(els,function(el){var o=O.filter(function(z){return String(z.id)===el.getAttribute("data-oid")})[0];if(o)sfRmOne(el,o)})})}catch(e){}}
 function sfRmSend(){try{if(typeof sb==="undefined"||!sb||!navigator.geolocation)return;sb.auth.getSession().then(function(r){var us=r.data&&r.data.session&&r.data.session.user;var me=us&&U.filter(function(z){return z.sid===us.id})[0];var on=!!(me&&me.role==="m"&&O.some(function(o){return o.msgr===me.id&&(o.state===1||o.state===2)}));if(on){if(sfRm.wid!==null)return;sfRm.wid=navigator.geolocation.watchPosition(function(p){var n=Date.now();if(n-sfRm.last<5000)return;sfRm.last=n;sb.from("sf_courier_loc").upsert({courier_sid:us.id,lat:p.coords.latitude,lng:p.coords.longitude,accuracy:p.coords.accuracy},{onConflict:"courier_sid"}).then(function(){},function(){})},function(){},{enableHighAccuracy:true,maximumAge:5000,timeout:20000})}else if(sfRm.wid!==null){navigator.geolocation.clearWatch(sfRm.wid);sfRm.wid=null}},function(){})}catch(e){}}
 setInterval(sfRmTick,1500);setInterval(sfRmSend,5000);setTimeout(sfRmSend,3000);
+/* TRK-PRO */
+function sfTrk(o){try{
+  var v=(typeof usr==="function"&&usr(ses))||{},t=tr(o.tid)||{fee:0},ent=+o.entity||0,fee=+t.fee||0,mine=!!(o.msgr&&v.id===o.msgr);
+  function pr(k,x){return'<div class="sf-pr"><span>'+k+'</span><b>'+x+'</b></div>'}
+  function dt(i){var p=S[i]+" \u00b7 ",l=(o.log||[]).filter(function(x){return String(x).indexOf(p)===0})[0];return l?esc(String(l).slice(p.length)):""}
+  var steps=S.map(function(n,i){var c=(o.state===4||i<o.state)?"d":i===o.state?"c":"";return'<div class="sf-st '+c+'"><b>'+esc(n)+'</b><span>'+dt(i)+"</span></div>"}).join("");
+  var m=o.msgr?usr(o.msgr):null,cr="";
+  if(m&&!mine){cr='<div class="sf-cr">'+av(m.id)+'<div><b>'+esc(nm(o.msgr))+'</b><span>'+avgT(m.id)+" \u00b7 "+(Object.keys(m.veh||{}).length?"Con veh\u00edculo":"A pie")+(m.status==="ok"?" \u00b7 Verificado":"")+"</span></div></div>"}
+  var pay=mine?pr("Ganas",cop(fee*(1-COM)))+pr("Reembolso de la entidad",cop(ent)):pr("Servicio Sin Fila",cop(fee))+pr("Costo de la entidad",cop(ent))+'<div class="sf-pr t"><span>Total</span><b>'+cop(fee+ent)+"</b></div>";
+  return'<div class="sf-trk">'+cr+'<div class="sf-tl">'+steps+'</div><div class="sf-pw">'+pay+"</div></div>"}catch(e){return""}}
+try{if(typeof mapBox==="function"){var sfMb0=mapBox;mapBox=function(o){return sfMb0(o)+sfTrk(o)}}}catch(e){}
 function sfRole(){if(typeof sb==="undefined"||!sb)return;sb.auth.getSession().then(function(r){var u=r.data&&r.data.session&&r.data.session.user;if(!u)return;sb.from("profiles").select("role").eq("id",u.id).maybeSingle().then(function(q){var rr=q.data&&q.data.role,nr=rr==="admin"?"a":rr==="courier"?"m":null;if(!nr)return;var f=U.filter(function(z){return z.sid===u.id})[0];if(!f)return;var md=u.user_metadata||{},cg=false;if(f.role!==nr){f.role=nr;cg=true}if(nr==="m"){if(f.status!=="ok"){f.status="ok";cg=true}if(md.full_name&&f.name!==md.full_name){f.name=md.full_name;cg=true}if(md.ced&&f.ced!==md.ced){f.ced=md.ced;cg=true}if(md.ref&&f.ref!==md.ref){f.ref=md.ref;cg=true}if(md.pay_num&&!f.pay){f.pay={met:md.pay||"Nequi",num:md.pay_num};cg=true}if(!f.veh){f.veh={};cg=true}}if(cg){save();render()}},function(){})},function(){})}var sfBusy=false,sfTm=null,sfLast=null,sfWho=null;
 function sfUid(){try{return crypto.randomUUID()}catch(e){return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==="x"?r:(r&3|8)).toString(16)})}}
 function sfH(s){var h=5381,i=s.length;while(i){h=(h*33)^s.charCodeAt(--i)}return (h>>>0)+":"+s.length}
