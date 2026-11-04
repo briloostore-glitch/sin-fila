@@ -739,7 +739,7 @@ function clientHome(u){
 function msgrView(u){
   if(u.status!=="ok")return nav==="p"?profile(u):"<h2>Cuenta en revisión</h2><div class=\"card\">"+(u.status==="rej"?"Tu solicitud no fue aprobada.":"Estamos verificando tu identidad. Cuando te aprueben recibirás pedidos con aviso sonoro.")+"</div>"+bar([["h","Inicio"],["p","Perfil"]]).replace("","");
   if(nav==="p")return profile(u);
-  if(nav==="o"){var m=O.filter(function(o){return o.msgr===u.id}).reverse().map(function(o){
+  if(nav==="o"){var m=O.filter(function(o){return o.msgr===u.id}).reverse().sort(function(a,b){return (a.state===4)-(b.state===4)}).map(function(o){
     var a="";
     if(o.state===1)a='<label for="pin-'+o.id+'">Código de 4 dígitos que te da el cliente</label><input id="pin-'+o.id+'" inputmode="numeric" maxlength="4">'+phBox("h"+o.id,"Foto de los documentos recibidos")+'<button class="btn" data-a="go" data-id="'+o.id+'">Confirmar identidad y recibir documentos</button>';
     if(o.state===2)a='<label for="pt-'+o.id+'">Radicado o referencia</label><input id="pt-'+o.id+'">'+phBox("p"+o.id,"Foto del comprobante")+'<button class="btn" data-a="proof" data-id="'+o.id+'">Subir comprobante</button>';
@@ -909,7 +909,7 @@ siteLoad();function landing0(){
   '<section class="sec" id="servicios"><h2>Servicios</h2><div class="svc">'+svc+'</div><p class="meta">Verás el precio exacto cuando elijas tu trámite, antes de pagar.</p></section>'+
   '<section class="sec" id="como"><h2>Cómo funciona</h2><div class="steps">'+st+'</div></section>'+
   '<div class="band"><b>Por qué puedes confiar</b><ul><li>Identidad verificada de clientes y mensajeros.</li><li>Código de 4 dígitos para entregar tus documentos a la persona correcta.</li><li>Fotos en cada paso y seguimiento en el mapa.</li><li>Pago retenido hasta que confirmas el comprobante.</li><li>Tus datos se usan solo para el trámite y puedes borrarlos cuando quieras.</li></ul></div>'+
-  '<section class="sec" id="mensajeros"><h2>¿Quieres ser mensajero?</h2><p class="sub">Elige los trámites que quieres hacer y recibe avisos de nuevos pedidos. Te quedas con el 75 % de la tarifa (porcentaje de ejemplo). Verificamos tu identidad antes de activar tu cuenta.</p><button class="btn" style="width:auto;padding:13px 20px" data-a="goto" data-v="reg" data-r="m">Registrarme como mensajero</button></section>'+
+  '<section class="sec" id="mensajeros"><h2>¿Quieres ser mensajero?</h2><p class="sub">Elige los trámites que quieres hacer y recibe avisos de nuevos pedidos. Te quedas con el 75 % de la tarifa. Verificamos tu identidad antes de activar tu cuenta.</p><button class="btn" style="width:auto;padding:13px 20px" data-a="goto" data-v="reg" data-r="m">Registrarme como mensajero</button></section>'+
   ft()}
 function ft(){
   var SOC_URL={li:"",yt:"",ig:"",x:""},APP_URL={g:"",a:""};
